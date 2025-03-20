@@ -4,10 +4,18 @@ from src.model.bitacora import Bitacora
 from src.model.usuario import Usuario
 from src.model.database import Database
 
+
+from src.model.errores import CamposVaciosError, FechaInvalidaError, RangoFechasInvalidoError, UsuarioNoEncontradoError, ContrasenaIncorrectaError, CorreoYaRegistradoError, ReporteError
+
+
 class TestRegistroActividad:
     def setup_method(self, method):
         """Método de configuración para cada prueba"""
         self.db = Database()
+
+
+        self.db.clear_tables()
+
         self.actividad = Actividad(self.db)
     
     # ---- PRUEBAS NORMALES ----
@@ -52,24 +60,40 @@ class TestRegistroActividad:
     # ---- PRUEBAS DE ERROR ----
     def test_registro_actividad_fecha_invalida(self):
         """Intentar registrar una actividad con una fecha incorrecta"""
+
         with pytest.raises(ValueError):
-            self.actividad.registrar_actividad("fecha_invalida", "Juan Pérez", "Revisión", "", "Pedro", "Soleado")
+
+            with pytest.raises(FechaInvalidaError):
+
+                self.actividad.registrar_actividad("fecha_invalida", "Juan Pérez", "Revisión", "", "Pedro", "Soleado")
     
     def test_registro_actividad_sin_descripcion(self):
         """Intentar registrar una actividad sin descripción"""
+
         with pytest.raises(ValueError):
-            self.actividad.registrar_actividad("2025-03-06", "Juan Pérez", "", "", "María", "Nublado")
+
+            with pytest.raises(CamposVaciosError):
+
+                self.actividad.registrar_actividad("2025-03-06", "Juan Pérez", "", "", "María", "Nublado")
     
     def test_registro_actividad_sin_responsable(self):
         """Intentar registrar una actividad sin responsable asignado"""
+
         with pytest.raises(ValueError):
-            self.actividad.registrar_actividad("2025-03-06", "Juan Pérez", "Reparación", "", "", "Soleado")
+
+            with pytest.raises(CamposVaciosError):
+
+                self.actividad.registrar_actividad("2025-03-06", "Juan Pérez", "Reparación", "", "", "Soleado")
 
 
 class TestConsultarActividades:
     def setup_method(self, method):
         """Configuración antes de cada prueba"""
         self.db = Database()
+
+
+        self.db.clear_tables()
+
         self.actividad = Actividad(self.db)
     
     # ---- PRUEBAS NORMALES ----
@@ -101,30 +125,51 @@ class TestConsultarActividades:
     
     def test_consultar_actividades_fechas_invertidas(self):
         """Consultar actividades con fechas invertidas (fecha fin antes que fecha inicio)"""
+
         resultado = self.actividad.consultar_actividades("2025-03-10", "2025-03-01")
         assert resultado == []
+
+        with pytest.raises(RangoFechasInvalidoError):
+            self.actividad.consultar_actividades("2025-03-10", "2025-03-01")
+
     
     # ---- PRUEBAS DE ERROR ----
     def test_consultar_actividades_fechas_invalidas(self):
         """Intentar consultar actividades con fechas inválidas"""
+
         with pytest.raises(ValueError):
-            self.actividad.consultar_actividades("fecha_invalida", "2025-03-06")
+
+            with pytest.raises(FechaInvalidaError):
+
+                self.actividad.consultar_actividades("fecha_invalida", "2025-03-06")
     
     def test_consultar_actividades_sin_parametros(self):
         """Intentar consultar actividades sin proporcionar fechas"""
+
         with pytest.raises(ValueError):
+
+         with pytest.raises(FechaInvalidaError):
+
             self.actividad.consultar_actividades("", "")
     
     def test_consultar_actividades_caracteres_especiales(self):
         """Intentar consultar actividades con caracteres especiales en las fechas"""
+
         with pytest.raises(ValueError):
-            self.actividad.consultar_actividades("@#$$%", "2025-03-06")
+
+            with pytest.raises(FechaInvalidaError):
+
+             self.actividad.consultar_actividades("@#$$%", "2025-03-06")
 
 
 class TestGenerarReporte:
     def setup_method(self, method):
         """Configuración antes de cada prueba"""
         self.db = Database()
+
+
+        self.db.clear_tables()
+
         self.actividad = Actividad(self.db)
         self.bitacora = Bitacora(self.db)
     
@@ -157,29 +202,49 @@ class TestGenerarReporte:
     
     def test_generar_reporte_fechas_invertidas(self):
         """Generar un reporte con fechas invertidas (fecha fin antes que fecha inicio)"""
+
         with pytest.raises(ValueError):
-            self.bitacora.generar_reporte("2025-03-10", "2025-03-01", "reporte_error.pdf")
+
+            with pytest.raises(RangoFechasInvalidoError):
+
+             self.bitacora.generar_reporte("2025-03-10", "2025-03-01", "reporte_error.pdf")
     
     # ---- PRUEBAS DE ERROR ----
     def test_generar_reporte_fechas_invalidas(self):
         """Intentar generar un reporte con fechas inválidas"""
+
         with pytest.raises(ValueError):
-            self.bitacora.generar_reporte("fecha_invalida", "2025-03-06", "reporte_error.pdf")
+
+            with pytest.raises(FechaInvalidaError):
+
+                self.bitacora.generar_reporte("fecha_invalida", "2025-03-06", "reporte_error.pdf")
     
     def test_generar_reporte_sin_parametros(self):
         """Intentar generar un reporte sin proporcionar fechas"""
+
         with pytest.raises(ValueError):
-            self.bitacora.generar_reporte("", "", "reporte_error.pdf")
+
+            with pytest.raises(FechaInvalidaError):
+
+             self.bitacora.generar_reporte("", "", "reporte_error.pdf")
     
     def test_generar_reporte_nombre_archivo_invalido(self):
         """Intentar generar un reporte con un nombre de archivo inválido"""
+
         with pytest.raises(ValueError):
-            self.bitacora.generar_reporte("2025-03-01", "2025-03-10", "")
+
+            with pytest.raises(ReporteError):
+
+                self.bitacora.generar_reporte("2025-03-01", "2025-03-10", "")
 
 class TestCrearCuenta:
     def setup_method(self, method):
         """Configuración antes de cada prueba"""
         self.db = Database()
+
+
+        self.db.clear_tables()
+
         self.usuario = Usuario(self.db)
     
     # ---- PRUEBAS NORMALES ----
@@ -196,8 +261,12 @@ class TestCrearCuenta:
     
     def test_crear_cuenta_sin_nombre(self):
         """Crear una cuenta sin proporcionar un nombre"""
+
         with pytest.raises(ValueError):
-            self.usuario.crear_cuenta("", "anonimo@example.com", "Clave123")
+
+            with pytest.raises(CamposVaciosError):
+
+                self.usuario.crear_cuenta("", "anonimo@example.com", "Clave123")
     
     # ---- PRUEBAS EXTREMAS ----
     def test_crear_cuenta_nombre_muy_largo(self):
@@ -220,24 +289,40 @@ class TestCrearCuenta:
     # ---- PRUEBAS DE ERROR ----
     def test_crear_cuenta_sin_correo(self):
         """Intentar crear una cuenta sin correo electrónico"""
+
         with pytest.raises(ValueError):
-            self.usuario.crear_cuenta("Juan Pérez", "", "Password123")
+
+            with pytest.raises(CamposVaciosError):
+
+             self.usuario.crear_cuenta("Juan Pérez", "", "Password123")
     
     def test_crear_cuenta_sin_contrasena(self):
         """Intentar crear una cuenta sin contraseña"""
+
         with pytest.raises(ValueError):
-            self.usuario.crear_cuenta("Juan Pérez", "juan@example.com", "")
+
+            with pytest.raises(CamposVaciosError):
+
+                self.usuario.crear_cuenta("Juan Pérez", "juan@example.com", "")
     
     def test_crear_cuenta_correo_repetido(self):
         """Intentar crear una cuenta con un correo ya registrado"""
         self.usuario.crear_cuenta("Juan Pérez", "juan@example.com", "Password123")
+
         with pytest.raises(ValueError):
-            self.usuario.crear_cuenta("Otro Usuario", "juan@example.com", "NuevaClave456")
+
+            with pytest.raises(CorreoYaRegistradoError):
+
+                self.usuario.crear_cuenta("Otro Usuario", "juan@example.com", "NuevaClave456")
 
 class TestIniciarSesion:
     def setup_method(self, method):
         """Configuración antes de cada prueba"""
         self.db = Database()
+
+
+        self.db.clear_tables()
+
         self.usuario = Usuario(self.db)
         self.usuario.crear_cuenta("Juan Pérez", "juan@example.com", "Password123")
     
@@ -283,24 +368,39 @@ class TestIniciarSesion:
     # ---- PRUEBAS DE ERROR ----
     def test_iniciar_sesion_usuario_inexistente(self):
         """Intentar iniciar sesión con un usuario que no existe"""
+
         with pytest.raises(ValueError):
-            self.usuario.iniciar_sesion("desconocido@example.com", "ClaveInvalida")
+
+            with pytest.raises(UsuarioNoEncontradoError):
+
+                self.usuario.iniciar_sesion("desconocido@example.com", "ClaveInvalida")
     
     def test_iniciar_sesion_contrasena_incorrecta(self):
         """Intentar iniciar sesión con una contraseña incorrecta"""
+
         with pytest.raises(ValueError):
-            self.usuario.iniciar_sesion("juan@example.com", "ClaveIncorrecta")
+
+            with pytest.raises(ContrasenaIncorrectaError):
+
+                self.usuario.iniciar_sesion("juan@example.com", "ClaveIncorrecta")
     
     def test_iniciar_sesion_sin_parametros(self):
         """Intentar iniciar sesión sin ingresar usuario ni contraseña"""
+
         with pytest.raises(ValueError):
-            self.usuario.iniciar_sesion("", "")
+
+            with pytest.raises(CamposVaciosError):
+
+                self.usuario.iniciar_sesion("", "")
 
 
 class TestCambiarContrasena:
     def setup_method(self, method):
         """Configuración antes de cada prueba"""
         self.db = Database()
+
+        self.db.clear_tables()
+
         self.usuario = Usuario(self.db)
         self.usuario.crear_cuenta("Juan Pérez", "juan@example.com", "Password123")
     
@@ -342,15 +442,27 @@ class TestCambiarContrasena:
     # ---- PRUEBAS DE ERROR ----
     def test_cambiar_contrasena_usuario_inexistente(self):
         """Intentar cambiar la contraseña de un usuario que no existe"""
+
         with pytest.raises(ValueError):
-            self.usuario.cambiar_contrasena("desconocido@example.com", "NuevaClave")
+
+            with pytest.raises(UsuarioNoEncontradoError):
+
+                self.usuario.cambiar_contrasena("desconocido@example.com", "NuevaClave")
     
     def test_cambiar_contrasena_sin_parametros(self):
         """Intentar cambiar la contraseña sin proporcionar parámetros"""
+
         with pytest.raises(ValueError):
+
+         with pytest.raises(CamposVaciosError):
+
             self.usuario.cambiar_contrasena("", "")
     
     def test_cambiar_contrasena_sin_contrasena_nueva(self):
         """Intentar cambiar la contraseña sin proporcionar la nueva contraseña"""
+
         with pytest.raises(ValueError):
-            self.usuario.cambiar_contrasena("juan@example.com", "")
+
+            with pytest.raises(CamposVaciosError):
+
+                self.usuario.cambiar_contrasena("juan@example.com", "")

@@ -38,9 +38,15 @@ Pruebas Normales
 | #  | Descripción                               | Datos de entrada                           | Resultado esperado    |
 |----|-----------------------------------------  |------------------------------------------- |--------------------   |
 | 1  | Registrar una actividad con datos válidos | Fecha: "2025-03-06", Supervisor: "Juan",   | Actividad registrada  |
+
                                                    Descripción: "Revisión", Clima: "Soleado"   
 | 2  | Registrar una actividad sin anexo         | Fecha: "2025-03-06", Supervisor: "Juan",   | Actividad registrada  |
                                                   "Limpieza", Clima: "Nublado"
+
+|                                                 |  Descripción: "Revisión", Clima: "Soleado" |                      |
+| 2  | Registrar una actividad sin anexo         | Fecha: "2025-03-06", Supervisor: "Juan",   | Actividad registrada  |
+|                                                |  "Limpieza", Clima: "Nublado"              |                       |
+
 | 3  | Registrar una actividad con clima variable| Fecha: "2025-03-06", Supervisor: "Juan",   | Actividad registrada  |
                                                   "Reparación", Clima: "Lluvia intermitente"
 
@@ -67,7 +73,11 @@ Pruebas Normales
 | #  | Descripción                                     | Datos de entrada                               | Resultado esperado    |
 |----|----------------------------------------------  |----------------------------------------------- |--------------------   |
 | 1  | Consultar actividades dentro de un rango válido | Fecha inicio: "2025-03-01", Fecha fin: "2025-03-10" | Devuelve lista de 
+
                                                                                                               actividades|
+
+|                                                      |                                                       actividades|
+
 | 2  | Consultar actividades sin resultados          | Fecha inicio: "2030-01-01", Fecha fin: "2030-01-10" | Devuelve lista vacía |
 | 3  | Consultar actividades en la fecha actual      | Fecha: "2025-03-06"                          | Devuelve lista de actividades |
 
@@ -76,7 +86,11 @@ Pruebas Extremas
 | #  | Descripción                                | Datos de entrada                               | Resultado esperado    |
 |----|------------------------------------------  |----------------------------------------------- |--------------------   |
 | 4  | Consultar actividades con rango muy amplio | Fecha inicio: "2000-01-01", Fecha fin: "2100-12-31" | Devuelve lista de 
+
                                                                                                           actividades |
+
+|                                                 |                                                         actividades |
+
 | 5  | Consultar actividades en un solo día      | Fecha inicio: "2025-03-06", Fecha fin: "2025-03-06" | Devuelve lista de actividades |
 | 6  | Consultar actividades con fechas invertidas | Fecha inicio: "2025-03-10", Fecha fin: "2025-03-01" | Devuelve lista vacía |
 
@@ -96,9 +110,15 @@ Pruebas Normales
 | #  | Descripción                               | Datos de entrada                                     | Resultado esperado     |
 |----|-----------------------------------------  |-----------------------------------------------       |--------------------    |
 | 1  | Generar un reporte en un rango válido     | Fecha inicio: "2025-03-01", Fecha fin: "2025-03-10", | Reporte generado
+
                                                   Archivo: "reporte.pdf"                                                         |
 | 2  | Generar un reporte sin actividades       | Fecha inicio: "2030-01-01", Fecha fin: "2030-01-10",  | Reporte generado       |
                                                   Archivo: "reporte_vacio.pdf" 
+
+|                                                |  Archivo: "reporte.pdf"                              |                           |
+| 2  | Generar un reporte sin actividades       | Fecha inicio: "2030-01-01", Fecha fin: "2030-01-10",  | Reporte generado       |
+|                                               |   Archivo: "reporte_vacio.pdf"                        |                         |
+
 | 3  | Generar un reporte con la fecha actual  | Fecha: "2025-03-06", Archivo: "reporte_hoy.pdf"        | Reporte generado       | 
 
 Pruebas Extremas
@@ -171,11 +191,19 @@ Pruebas de Error
 | #  | Descripción                                  | Datos de entrada                               | Resultado esperado              |
 |----|-------------------------------------------- |---------------------------------------------- |-------------------------------- |
 | 7  | Intentar iniciar sesión con usuario inexistente | Correo: "desconocido@example.com"           | Lanza          
+
                                                                                                      `UsuarioNoEncontradoError` |
 | 8  | Intentar iniciar sesión con contraseña incorrecta | Correo: "juan@example.com",    | Lanza 
                                                          Contraseña: "ClaveIncorrecta"    `ContrasenaIncorrectaError` |
 | 9  | Intentar iniciar sesión sin ingresar usuario y contraseña | Correo: "", Contraseña: ""  | Lanza  
                                                                                                `CamposVaciosError`  |
+
+|                                                       |                                             `UsuarioNoEncontradoError` |
+| 8  | Intentar iniciar sesión con contraseña incorrecta | Correo: "juan@example.com",    | Lanza                               |
+|                                                        | Contraseña: "ClaveIncorrecta"  |  `ContrasenaIncorrectaError` |
+| 9  | Intentar iniciar sesión sin ingresar usuario y contraseña | Correo: "", Contraseña: ""  | Lanza                  |
+|                                                                 |                             | `CamposVaciosError`  |
+
 ### **Cambiar contraseña**
 
 Pruebas Normales
@@ -183,10 +211,17 @@ Pruebas Normales
 | #  | Descripción                              | Datos de entrada                                      | Resultado esperado  |
 |----|---------------------------------------- |----------------------------------------------------- |-------------------- |
 | 1  | Cambiar contraseña con credenciales correctas | Correo: "juan@example.com", Nueva contraseña: "NuevaPassword456" | Contraseña 
+
                                                                                                                          cambiada |
 | 2  | Cambiar contraseña dos veces seguidas   | Nueva contraseña: "NuevaClave1", luego "NuevaClave2" | Contraseña cambiada |
 | 3  | Cambiar contraseña después de crear cuenta | Correo: "maria@example.com", Nueva contraseña: "NuevaClave789" | Contraseña 
                                                                                                                     cambiada |
+
+|                                                    |                                                                  |   cambiada |
+| 2  | Cambiar contraseña dos veces seguidas   | Nueva contraseña: "NuevaClave1", luego "NuevaClave2" | Contraseña cambiada |
+| 3  | Cambiar contraseña después de crear cuenta | Correo: "maria@example.com", Nueva contraseña: "NuevaClave789" | Contraseña 
+|                                                  |                                                                  cambiada |
+
 
 Pruebas Extremas
 
@@ -195,7 +230,11 @@ Pruebas Extremas
 | 4  | Cambiar contraseña con una contraseña extremadamente larga | Contraseña: "A" * 100 | Contraseña cambiada |
 | 5  | Cambiar contraseña con caracteres especiales | Contraseña: "Clave$%&/()=?" | Contraseña cambiada |
 | 6  | Intentar cambiar la contraseña a la misma   | Contraseña anterior: "Password123", Nueva: "Password123" | Lanza 
+
                                                                                                               `CamposVaciosError` |
+
+|                                                  |                                                            `CamposVaciosError` |
+
 
 Pruebas de Error
 
@@ -203,7 +242,14 @@ Pruebas de Error
 | #  | Descripción                                     | Datos de entrada                          | Resultado esperado               |
 |----|---------------------------------------------- |----------------------------------------- |---------------------------------- |
 | 7  | Intentar cambiar la contraseña de usuario inexistente | Correo: "desconocido@example.com"       | Lanza 
+
                                                                                                        `UsuarioNoEncontradoError` |
 | 8  | Intentar cambiar la contraseña sin proporcionar datos | Correo: "", Contraseña: ""             | Lanza `CamposVaciosError`  |
 | 9  | Intentar cambiar la contraseña sin ingresar nueva contraseña | Correo: "juan@example.com", Contraseña: "" | Lanza 
                                                                                                                  `CamposVaciosError`  |
+
+|                                                            |                                           `UsuarioNoEncontradoError` |
+| 8  | Intentar cambiar la contraseña sin proporcionar datos | Correo: "", Contraseña: ""             | Lanza `CamposVaciosError`  |
+| 9  | Intentar cambiar la contraseña sin ingresar nueva contraseña | Correo: "juan@example.com", Contraseña: "" | Lanza 
+|                                                                    |                                            `CamposVaciosError`  |
+
